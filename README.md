@@ -1,1 +1,0 @@
-# teodorgot.github.io

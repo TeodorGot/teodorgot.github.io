@@ -1,0 +1,61 @@
+---
+title: 'Peer-graded Assignment: R Markdown Presentation & Plotly'
+author: "Teodor Gottfried"
+date: "August 2020"
+output:
+  ioslides_presentation: ioslides_presentation
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(plotly)
+```
+
+##Star wars
+
+According to wikipedia:
+
+> Star Wars is an American epic space-opera media franchise created by George Lucas.
+
+
+Also dataset for example in package "dplyr"
+missed information in dataset I find [here](https://starwars.fandom.com/wiki/Main_Page)
+
+## First loook to dataset and some manipulations
+
+```{r cars, echo = TRUE}
+head(starwars)
+```
+```{r, include=FALSE}
+droids <- starwars %>% 
+  filter(species == "Droid")
+droids[5,2] <-67
+droids[5,3] <-18
+homeworld_df <-  starwars %>% 
+       filter(!is.na(homeworld))
+homeworld_df <-homeworld_df %>% 
+   add_count(homeworld) %>% 
+    mutate(C_homeworld=if_else(n>=3,homeworld,"other"))
+homeworld_df <-homeworld_df %>% 
+    mutate(bmi = mass / ((height / 100)  ^ 2))
+homeworld_df_g <- homeworld_df %>% 
+    filter(gender=="male" | gender=="female")
+```
+
+##Droid plot
+
+```{r pressure}
+p1<-ggplot(droids, aes(x=height, y=mass, color=name))+geom_point()
+ggplotly(p1)
+```
+<iframe src="demo.html" style="position:absolute;height:100%;width:100%"></iframe>
+
+##Homewold and gender and bmi
+```{r}
+p2 <-ggplot(homeworld_df_g, aes(gender,bmi )) +
+        geom_point(aes(color=C_homeworld, size=n))
+ggplotly(p2)
+```
+
